@@ -29,7 +29,6 @@ hash_database = {
         { name = "MD2", hashcat = "--", john = "md2" },
         { name = "RIPEMD-128", hashcat = "--", john = "ripemd-128" },
         { name = "BLAKE3-128", hashcat = "--", john = "--" },
-    { name = "FNV-1-128", hashcat = "--", john = "--" },
         { name = "FNV-1-128", hashcat = "--", john = "--" },
         { name = "Murmur3-128", hashcat = "--", john = "--" },
         { name = "SNEFRU-128", hashcat = "--", john = "snefru-128" },
