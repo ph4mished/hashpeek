@@ -87,7 +87,7 @@ func main() {
 	}
 
 	if *version {
-		fmt.Println(ifColor(bgrn, "hashpeek v.0.1.1", rst))
+		fmt.Println(ifColor(bgrn, "hashpeek v.0.1.0", rst))
 		return
 	}
 
