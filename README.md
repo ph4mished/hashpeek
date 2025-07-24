@@ -1,5 +1,6 @@
 [![Github version](https://img.shields.io/badge/VERSION%20-0.1.0-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge)]()
-[![GitHub license](https://img.shields.io/github/license/ph4mished/hashpeek)](https://github.com/ph4mished/hashpeek/blob/master/LICENSE)
+
+[![License](https://img.shields.io/github/license/ph4mished/hashpeek?style=for-the-badge)](https://github.com/ph4mished/hashpeek/blob/master/LICENSE)
 
 
 
