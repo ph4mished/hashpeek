@@ -36,7 +36,7 @@ You tried to identify the hashtypes of a file containing hundred hashes (all wit
 <pre><code>git clone https://github.com/ph4mished/hashpeek
 cd hashpeek
 go build hashpeek
-./hashpeek -h
+./hashpeek -h -c
 </code></pre>
 
 <hr>
