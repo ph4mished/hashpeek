@@ -63,7 +63,7 @@ go build hashpeek
 
 <h3><strong>Accepting Input From Stdin</strong></h3>
 <p><em>&gt; this is for recursive file parsing</em></p>
-<pre><code>ls mydirectory | ./hashpeek -f -
+<pre><code>find /my/directory | ./hashpeek -f -
 </code></pre>
 
 <hr>
