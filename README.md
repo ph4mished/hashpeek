@@ -13,11 +13,14 @@
 <p><strong>These are the issues or limitations hashpeek is here to solve.</strong></p>
 
 <hr>
+
+
+<h2>✨ <strong>Features</strong></h2>
+<h3>* <strong>Segment Extraction</strong></h3>
 <p>Some files do contain pure hashes hence no cleanup is required and thats okay. But most of the times, hashes are found in dumps which does require extraction. Hashpeek wont let you make a fuss about it. It's got <br><code>-trunc '{N} `DELIM`'</code><br> to get you sorted where 'N' handles the field or index (0-based index) of the hash for extraction and 'DELIM' handles the delimiter. Hashpeek also got ignore flag to ignore comments so they don't get parsed as hashes too and to keep the results clean.
   eg. <br><code> -i '#,/,$'</code><br>
 </p>
-
-<h2>✨ <strong>Features</strong></h2>
+<hr>
 
 <h3>* <strong>Bulk Hash Identification</strong></h3>
 
