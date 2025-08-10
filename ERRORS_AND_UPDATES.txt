@@ -1,0 +1,4 @@
+- it needs john and hashcat mode
+- it needs different output mode file extensions (csv, txt, json)
+-it needs different output mode (table, csv)
+-it needs help section 
