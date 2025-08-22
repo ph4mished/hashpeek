@@ -39,10 +39,7 @@ You tried to identify the hashtypes of a file containing hundred hashes (all wit
 
 <h2>🛠 <strong>Install</strong></h2>
 
-<pre><code>git clone https://github.com/ph4mished/hashpeek
-cd hashpeek
-go build hashpeek
-./hashpeek -h
+<pre><code>go install github.com/ph4mished/hashpeek@latest
 </code></pre>
 
 <hr>
