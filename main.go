@@ -143,7 +143,7 @@ if *Json{
 
 	if *version {
 		*version = true
-		fmt.Println(ifColor(bgrn, "hashpeek v.0.1.2", rst))
+		fmt.Println(ifColor(bgrn, "hashpeek v0.1.3", rst))
 		return
 	}
 
