@@ -121,7 +121,7 @@ Using <code> -i '//,#,[*]' </code> will silence the errors that showed above</p>
 
 <h3>* <strong>Hash Extraction From Unstructured Data</strong></h3>
 
-<p><code>hashpeek</code> Some hashes can also be found in messy data logs. These isn't structured data so <code>-trunc</code> or <code>-i</code> can't work here. Do not worry, hashpeek got this too. It hash an extraction engine that can extract hash from any messy log, what it only requires is a minimum length to search for (this is to reduce false positives on the side of the user). No matter how messy the log is just use <code> -e <min-length></code>.</p>
+<p><code>hashpeek</code> Some hashes can also be found in messy data logs. These isn't structured data so <code>-trunc</code> or <code>-i</code> can't work here. Do not worry, hashpeek got this too. It hash an extraction engine that can extract hash from any messy log, what it only requires is a minimum length to search for (this is to reduce false positives on the side of the user). No matter how messy the log is just use <code> -e [min-length]</code>.</p>
 
 <p><strong>Example:</strong><br>
 You have this log
