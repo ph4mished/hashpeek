@@ -98,7 +98,7 @@ func VerboseAnalyze(hashLine, truncLine, ignoreStr, format string) {
 		if truncLine != "" || ignoreStr != "" {
 
 			if truncLine != "" || ignoreStr != "" {
-				hashLine = CleanHashLine(hashLine, truncLine, ignoreStr, /*countLine*/ 0, "default")
+				hashLine = CleanHashLine(hashLine, truncLine, ignoreStr, /*countLine*/ 0, format)
 			}
 		}
 
@@ -131,7 +131,7 @@ func FileVerboseAnalyze(hashFile, truncLine, ignoreStr, format string) {
 		hashLine := strings.TrimSpace(scanner.Text())
 		countLine++
 		if truncLine != "" || ignoreStr != "" {
-			hashLine = CleanHashLine(hashLine, truncLine, ignoreStr, countLine, "default")
+			hashLine = CleanHashLine(hashLine, truncLine, ignoreStr, countLine, format)
 		}
 		if format == "default"{
 		fmt.Print(ifColor(bgrn, "\nHash: ", rst), ifColor(bylw, hashLine, rst))

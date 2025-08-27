@@ -41,7 +41,7 @@ func ifColor(frontCol string, word interface{}, backCol string) string {
 func main() {
 
 	countLine := 0
-	noColor := flag.Bool("nc", false, "Disable coloured output")
+		noColor := flag.Bool("nc", false, "Disable coloured output")
 	hash := flag.String("x", "", "Analyze a single hash string")
 	file := flag.String("f", "", "Analyze hashes from a file")
 	ignore := flag.String("i", "", "Ignore lines that begins with  character/string '<string>'")
@@ -69,6 +69,7 @@ if *noColor {
 	              }
 
 	if *csv {
+	*csv = true
 		format = "csv"
 	} else if *Json {
 		format = "json"
@@ -124,9 +125,13 @@ if *noColor {
         if format == "default" {
 		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
         }
-				} else {
+				} else { 
+				if format == "csv" || format == "json"{
+					FileVerboseAnalyze(*file, *truncLine, *ignore, format)
+				}else {
 				                GroupHash(*file, *truncLine, *ignore, *extract)
     fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+				        }
 				        }
 			}
 		}
@@ -141,9 +146,13 @@ if *verbose {
 		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
         }
         return
-        } else {
+        }  else { 
+        if format == "csv" || format == "json" {
+           FileVerboseAnalyze(*file, *truncLine, *ignore, format)
+        } else{
         	GroupHash(*file, *truncLine, *ignore, *extract)
             		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+        }
         }
         return
 				} else {
@@ -154,8 +163,12 @@ if *verbose {
         }
         return
         } else {
+        if format == "csv" || format == "json" {
+                   FileVerboseAnalyze(*file, *truncLine, *ignore, format)
+                 } else{
         	GroupHash(*file, *truncLine, *ignore, *extract)
             		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+        }
         }
         return
 				}
