@@ -254,8 +254,8 @@ Tiger-160,3
 
 <h3>* <strong>Different Output Formats</strong></h3>
 <p> hashpeek has three different output formats which are json, CSV and default. These formats are triggered by these flags <br> 
-json format => '-json'
-CSV format => '-csv'
+json format => -json<br>
+CSV format => -csv<br>
 Default formats => null (meaning: no flag is required)
 </p>
 <hr>
@@ -426,20 +426,20 @@ Woltlab Burning Board 4.x
 <h2>⚙️ <strong>Usage</strong></h2>
 
 <h3><strong>With Hash</strong></h3>
-<pre><code>./hashpeek -x 34850bfc40a15d3783447f344db0bcde
+<pre><code>hashpeek -x 34850bfc40a15d3783447f344db0bcde
 </code></pre>
 
 <hr>
 
 <h3><strong>With HashFiles</strong></h3>
-<pre><code>./hashpeek -f hashed.txt
+<pre><code> hashpeek -f hashed.txt
 </code></pre>
 
 <hr>
 
 <h3><strong>Accepting Input From Stdin</strong></h3>
 <p><em>&gt; for recursive file parsing (only when you have a directory of hashfiles)</em></p>
-<pre><code>find mydirectory | ./hashpeek -f -
+<pre><code>find mydirectory | hashpeek -f -
 </code></pre>
 <bro>
 <b>The content of the files in this folder is too large to show here</b>
