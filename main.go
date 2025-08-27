@@ -176,7 +176,7 @@ if *verbose {
 
 	if *version {
 		*version = true
-		fmt.Println(ifColor(bgrn, "hashpeek v0.2.0 (built by ph4mished)", rst))
+		fmt.Println(ifColor(bgrn, "hashpeek v0.2.2 (built by ph4mished)", rst))
 		return
 	}
 }
