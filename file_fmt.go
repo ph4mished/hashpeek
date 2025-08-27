@@ -8,27 +8,13 @@ import (
 	"os"
 	"strings"
 )
- type ErrOutput struct {
-        Status     string `json:"status"`
-        Content string `json:"input"`
-        Description      string `json:"description"`
-      // File    string `json:"content"`
-        //Suggestion string `json:"suggestion"`
-    }
 
-   // type SuccessOutput struct {
-            //    Status     string `json:"status"`
-              //  Description      []HASHALGO `json:"descript"`
-              // File    string `json:"content"`
-               //Suggestion string `json:"suggestion"`
-           // }
-  /*  errObj := ErrorOutput{
-            Status:     "error",
-             Error:      errDescript,
-             Line:       countLine,
-            Content:    hashLine,
-              //Suggestion: errSuggest,
-          }*/
+type ErrOutput struct {
+	Status      string `json:"status"`
+	Content     string `json:"input"`
+	Description string `json:"description"`
+}
+
 func DefaultFormat(targetHash string) string {
 	var defMatch []string
 	rangeHash, found := HashAnalyze(targetHash)
@@ -51,12 +37,13 @@ func CSVFormat(targetHash string) {
 	w := csv.NewWriter(os.Stdout)
 
 	if !found {
-		_ = w.Write([]string{"status","description", "input"})
+		_ = w.Write([]string{"status", "description", "input"})
 		_ = w.Write([]string{"unknown", "unknown hash format", targetHash})
 		w.Flush()
+		return
 	}
 
-//for file hash analysis. the topic prints per hash. it shouldn't be so
+	//for file hash analysis. the topic prints per hash. it shouldn't be so
 	if err := w.Write([]string{"hash", "hashtype",
 		"hashcat_mode", "john_format"}); err != nil {
 		log.Fatalln("error writing header to csv:", err)
@@ -85,18 +72,12 @@ func JSONFormat(targetHash string) string {
 	rangeHash, found := HashAnalyze(targetHash)
 
 	if !found {
-	errObj := ErrOutput{
-	                Status:     "unknown",
-	                Content:     targetHash,
-	                 Description:      "Unknown hash format",
-	                // Line:       countLine,
-	                //Content:    hashLine,
-	                  //Suggestion: errSuggest,
-	              }
-	/*	errObj := map[string]string{
-			"error": "Unknown hash format",
-			"input": targetHash,
-		}*/
+		errObj := ErrOutput{
+			Status:      "unknown",
+			Content:     targetHash,
+			Description: "Unknown hash format",
+		}
+
 		jsonErr, err := json.MarshalIndent(errObj, "", "  ")
 		if err != nil {
 			return fmt.Sprintf("[!] JSON Encoding Error: %v\n", err)
@@ -116,17 +97,6 @@ func JSONFormat(targetHash string) string {
 	result := map[string][]HASHALGO{
 		targetHash: rangeHash,
 	}
-
-/*result := SuccessOutput{
-    Status:      "success",
-   // Line:        7,
-    Hash:        "8d969eef6ecad3c29a3a629280e686cf",
-    Type:        "NTLM", 
-    HashcatMode: 1000,
-    JohnFormat:  "NT",*/
-    //Input:       originalLine,
-    //Fields:      parsedFields,
-//}
 
 	jsonOut, err := json.MarshalIndent(result, "", "  ")
 	jsonMatch = append(jsonMatch, string(jsonOut))

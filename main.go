@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"golang.org/x/term"
 	"os"
 	"strings"
 )
@@ -25,20 +26,26 @@ const (
 	rst   = "\033[0m"
 )
 
-var color = flag.Bool("c", false, "Enable Coloured Output")
+
+var hashLine, format string
+var colorEnabled bool
 
 func ifColor(frontCol string, word interface{}, backCol string) string {
-	if *color {
+	if colorEnabled {
 		colouredWord := fmt.Sprintf("%s%v%s", frontCol, word, backCol)
 		return colouredWord
 	}
 	return fmt.Sprint(word)
 }
-//trunc and ignore will be handled because of stdin mode. the current way of handling trunc and ignore will make this redundant
+
 func main() {
+
+	countLine := 0
+	noColor := flag.Bool("nc", false, "Disable coloured output")
 	hash := flag.String("x", "", "Analyze a single hash string")
 	file := flag.String("f", "", "Analyze hashes from a file")
 	ignore := flag.String("i", "", "Ignore lines that begins with  character/string '<string>'")
+	extract := flag.Int("e", 0, "Extract hex-like hashes from messy text/logs using the given minimum length (e.g. -e 16) ")
 	truncLine := flag.String("trunc", "", "Capture segment at index N (0-indexed) after splitting by delimiter X  (e.g. -trunc '{1} `:::`' gets 'hash' from 'user:::hash:::salt')")
 	version := flag.Bool("v", false, "Show the version of hashpeek")
 	help := flag.Bool("h", false, "Show this help message")
@@ -47,107 +54,116 @@ func main() {
 	verbose := flag.Bool("vb", false, "Show detailed results per hash (verbose)")
 
 	flag.Parse()
-	if len(os.Args) == 1 || *help {
-		*help = true
-		Help()
-		return
+
+if *noColor {
+               colorEnabled = false
+              } else {
+	colorEnabled = term.IsTerminal(int(os.Stdout.Fd()))
 	}
-if *csv {
+
+
+	        if len(os.Args) == 1 || *help {
+	                  *help = true
+	                  Help()
+	                  return
+	              }
+
+	if *csv {
+		format = "csv"
+	} else if *Json {
+		format = "json"
+	} else if *verbose {
+		format = "default"
+	} else {
+		format = "default"
+	}
+
+	
 	if *hash == "-" {
 		scanner := bufio.NewScanner(os.Stdin)
 		for scanner.Scan() {
 			input := scanner.Text()
+            countLine++
 			*hash = strings.TrimSpace(string(input))
-			if *hash == "" {
-				continue
+			if *hash != "" {
+				if *extract > 0 {
+					PrintExtractedHashes(*hash, *truncLine, *ignore, *extract,/* countLine,*/ format)
+				} else {
+				if format == "default"{
+				fmt.Print(ifColor(bgrn, "\nHash: ", rst), ifColor(bylw, *hash, rst))
+				}
+					VerboseAnalyze(*hash, *truncLine, *ignore, format)
+				}
 			}
-            CSVFormat(*hash)
 		}
-		return
 	} else if *hash != "-" && *hash != "" {
-		CSVFormat(*hash)
-		return
-	}
-    
-	if *file != "-" && *file != "" {
-		VerboseAnalyze(*file, *truncLine, *ignore, "csv")
-		return
-	}
-    }
-
-if *Json{
-    	if *hash == "-" {
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			input := scanner.Text()
-			*hash = strings.TrimSpace(string(input))
-			if *hash == "" {
-				continue
-			}
-        fmt.Println(JSONFormat(*hash))
+		if *extract > 0 {
+			PrintExtractedHashes(*hash, *truncLine, *ignore, *extract, format)
+		} else {
+		if format == "default"{
+		fmt.Print(ifColor(bgrn, "\nHash: ", rst), ifColor(bylw, *hash, rst))
+		}
+			VerboseAnalyze(*hash, *truncLine, *ignore, format)
 		}
 		return
-	} else if *hash != "-" &&  *hash != "" {
-		fmt.Println(JSONFormat(*hash))
-		return
 	}
 
-	if *file != "-" && *file != "" {
-		VerboseAnalyze(*file, *truncLine, *ignore, "json")
-		return
-	}
-    }
-
-	if *hash == "-" {
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			input := scanner.Text()
-			*hash = strings.TrimSpace(string(input))
-			if *hash == "" {
-				continue
-			}
-			fmt.Println(ifColor(bgrn, "\n\nHash: ", rst), ifColor(bylw, *hash, rst))
-			fmt.Println(ifColor(bcyn, "POSSIBLE HASHTYPES", rst))
-			fmt.Println(DefaultFormat(*hash))
-		}
-		return
-	} else if *hash != "" && *hash != "-" {
-		fmt.Println(ifColor(bgrn, "\n Hash: ", rst), ifColor(bylw, *hash, rst))
-		fmt.Println(ifColor(bcyn, "POSSIBLE HASHTYPES", rst))
-		fmt.Println(DefaultFormat(*hash))
-		return
-	}
-
-	if *verbose && *file != "" {
-		VerboseAnalyze(*file, *truncLine, *ignore, "default")
-		return
-	}
 	if *file == "-" {
 		scanner := bufio.NewScanner(os.Stdin)
-		//for standard input mode
 		for scanner.Scan() {
-			input := scanner.Text()
-			*file = strings.TrimSpace(string(input))
-			if *file == "" {
-				continue
-			}
-			GroupHash(*file, *truncLine, *ignore)
-			fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
-		}
-		return
-	} else if *file != "" {
-		GroupHash(*file, *truncLine, *ignore)
+			*file = strings.TrimSpace(scanner.Text())
+			countLine++
+			if *file != "" {
+				if *extract > 0 {
+					PrintExtractedHashes(*file, *truncLine, *ignore, *extract, format)
+        if format == "default" {
 		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
-		return
+        }
+				} else if *verbose{
+					FileVerboseAnalyze(*file, *truncLine, *ignore, format)
+        if format == "default" {
+		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+        }
+				} else {
+				                GroupHash(*file, *truncLine, *ignore, *extract)
+    fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+				        }
+			}
+		}
+
+	}
+
+	if *file != "-" && *file != "" {
+if *extract > 0 {
+if *verbose {
+					PrintExtractedHashes(*file, *truncLine, *ignore, *extract, format)
+        if format == "default" {
+		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+        }
+        return
+        } else {
+        	GroupHash(*file, *truncLine, *ignore, *extract)
+            		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+        }
+        return
+				} else {
+				if *verbose {
+					FileVerboseAnalyze(*file, *truncLine, *ignore, format)
+        if format == "default" {
+		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+        }
+        return
+        } else {
+        	GroupHash(*file, *truncLine, *ignore, *extract)
+            		fmt.Println(ifColor(bblu, "\n[[[", rst), ifColor(bcyn, "End Of File of", rst), ifColor(bgrn, *file, rst), ifColor(bblu, "]]]\n", rst))
+        }
+        return
+				}
 	}
 
 	if *version {
 		*version = true
-		fmt.Println(ifColor(bgrn, "hashpeek v0.1.3", rst))
+		fmt.Println(ifColor(bgrn, "hashpeek v0.2.0 (built by ph4mished)", rst))
 		return
-	}
-
-	if *color {
-		*color = true
 	}
 }

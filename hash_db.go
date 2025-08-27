@@ -2,14 +2,6 @@ package main
 
 import "regexp"
 
-/*
-	type HASHALGO struct {
-		Name     string
-		HashCat  string
-		John     string
-		Extended bool
-	}
-*/
 type HASHALGO struct {
 	Name     string  `json:"name"`
 	HashCat  *string `json:"hashcat"`
