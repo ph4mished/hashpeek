@@ -13,7 +13,12 @@
 <p><strong>These are the issues or limitations hashpeek is here to solve.</strong></p>
 
 <hr>
-
+<h3>📝 <strong>To Do</strong></h3>
+<p>1. <b>Libpeek is in the making: </b> Hashpeek is being written so that it could be used as a library too.
+<br>
+2. <b>More hashtypes will be added to its database</b> 
+</p>
+<hr>
 
 <h2>✨ <strong>Features</strong></h2>
 <h3>* <strong>Segment Extraction</strong></h3>
