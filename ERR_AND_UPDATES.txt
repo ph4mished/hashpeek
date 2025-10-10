@@ -1,0 +1,26 @@
+this is a remake of hashpeek in golang. still the same author
+
+
+to give hashpeek some accuracy in its identification. if the hash was extracted, it should check if it has a hashname close to it "eg. md5: adee44..." this will help boost the is identification confidence up if really md5 was part of the resulted hashtypes
+
+plans to make
+0. it needs an identification confidence
+1. hashpeek will be supported for both libraries and binary
+2. it should support reading third party databases. (it should not be stuck on using only its built in database)
+2. user-defined database will be in json or nim this is to make it possible to 
+accept user defined databases too. 
+3. it should be flexible in hash extraction, but not much complex
+4. hashed should be grouped into most likely and least likely
+5. the ignore  flag will accept no value. once trunc is active, all lines that doesnt get trunced will be muted of their warnings
+6. the e-hex flag should able to accommodate these values, "32-96", "8,12,14", "45" and empty values
+
+plan for confidence
+#some confidence are gained if during extraction the key has the same name as a hashtype, confidence level for that hashtype is boosted because its practically impossible to see
+"md5: aef55da.." for the hash to be an sha1 hash.
+
+because just pattern matching is blind in hash identification hence a whole list of possible hashtypes and false positives, many factors must come into play to detect the hashtype of a given hash correctly.
+so far so good, the only method to reduce false positive is the plan above.
+
+i believe static "most likely hashes" tagging does little help, what if user enters an obscure hash, the identifier will still spill out the normal popular hashtypes as recommended results. Thats when a hash identifier loses its reason for existence.
+
+meta data from the hash is needed to guide the hash identifier to give out result with less positives. What if user provides a clean hash with nothing else. its stuck and stuck indeed

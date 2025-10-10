@@ -31,9 +31,9 @@ proc newFieldParser*(): FieldParser =
    if line != "":
      fp.parseField(line,delim, index)
     ]#
-proc incrementLine*(fp: FieldParser) = 
-  echo fp.currentLine+1
-  #inc(fp.currentLine)
+proc incrementLine*(fp: var FieldParser) = 
+  #echo fp.currentLine+1
+  inc(fp.currentLine)
 
 #this function exists to keep track of line number for correct error report
 proc parseField*(fp: FieldParser, hashLine, delim: string, index: int): (string, ErrorOut) =

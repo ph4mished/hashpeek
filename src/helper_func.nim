@@ -29,7 +29,7 @@ proc identifyHash*(hash, extCtext, extHex, truncLine: string, ignore: bool, form
             echo jsonFormat(identify(extStr))
           else:
             echo extStr
-            stdout.write(ifColor(fgGreen, "\nExtracted Hash: ") & ifColor(fgYellow, fmt "{extStr}"))
+            stdout.write(ifColor(fgGreen, "\n  Extracted Hash: ") & ifColor(fgYellow, fmt "{extStr}"))
             stdout.flushFile()
             echo fmt "{defaultFormat(identify(extStr))}\n"
         return
@@ -38,8 +38,9 @@ proc identifyHash*(hash, extCtext, extHex, truncLine: string, ignore: bool, form
     elif truncLine != "":  
       let (truncIndex, truncDelim) = parseTruncate(truncLine)  
       #echo truncIndex, truncDelim
-      let fp = newFieldParser()
+      var fp = newFieldParser()
       fp.incrementLine()
+      echo num
       let (truncRes, error) = fp.parseField(hash, truncDelim, truncIndex)
       if truncRes != "" or error.status == "error":
         if format == "csv":
@@ -63,7 +64,7 @@ proc identifyHash*(hash, extCtext, extHex, truncLine: string, ignore: bool, form
               stderr.flushFile()
               quit(1)
           else:
-            stdout.write(ifColor(fgGreen, "\nExtracted Hash: ") & ifColor(fgYellow, fmt "{truncRes}"))
+            stdout.write(ifColor(fgGreen, "\n  Extracted Hash: ") & ifColor(fgYellow, fmt "{truncRes}"))
             stdout.flushFile()
           #echo truncRes
             echo fmt "{defaultFormat(identify(truncRes))}\n"
@@ -79,7 +80,7 @@ proc identifyHash*(hash, extCtext, extHex, truncLine: string, ignore: bool, form
         echo jsonFormat(identify(hash))
         return
       else:
-        stdout.write(ifColor(fgGreen, "\nHash: ") & ifColor(fgYellow, fmt "{hash}"))
+        stdout.write(ifColor(fgGreen, "\n  Hash: ") & ifColor(fgYellow, fmt "{hash}"))
         stdout.flushFile()
         echo fmt "{defaultFormat(identify(hash))}\n"
       return
