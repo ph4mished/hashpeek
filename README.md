@@ -109,7 +109,7 @@ echo extractedHashes
 ```
 
 # CLI Usage
-! [Alt Text](https://github.com/ph4mished/hashpeek/my_gifs/Peek 2025-10-10 12-27.gif)
+! [Alt Text](https://gifyu.com/image/bwYHq)
 
 # Installation
 ```
