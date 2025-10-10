@@ -109,7 +109,7 @@ echo extractedHashes
 ```
 
 # CLI Usage
-![Alt Text](https://gifyu.com/image/bwYHq)
+![Alt Text](https://gifyu.com/image/bwYKE)
 
 # Installation
 ```
