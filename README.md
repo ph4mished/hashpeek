@@ -17,6 +17,7 @@
 <p>1. <b>Libpeek is in the making: </b> Hashpeek is being written so that it could be used as a library too.
 <br>
 2. <b>More hashtypes will be added to its database</b> 
+3. <b>Currently undergoing a rewrite in nim with API first approach.</b>
 </p>
 <hr>
 
