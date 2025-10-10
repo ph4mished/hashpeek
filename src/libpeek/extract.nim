@@ -35,6 +35,7 @@ proc incrementLine*(fp: FieldParser) =
   echo fp.currentLine+1
   #inc(fp.currentLine)
 
+#this function exists to keep track of line number for correct error report
 proc parseField*(fp: FieldParser, hashLine, delim: string, index: int): (string, ErrorOut) =
   #tuple[value: string, error: ErrorOut] = 
   var splitWord: seq[string]
@@ -43,7 +44,8 @@ proc parseField*(fp: FieldParser, hashLine, delim: string, index: int): (string,
   if index < 0:
      stderr.writeLine(ifColor(fgRed, "[ERROR] Invalid truncation index: ") & ifColor(fgGreen, "Negative indices not supported"))
      stderr.flushFile()
-     return ("", ErrorOut())
+     quit(0)
+     #return ("", ErrorOut())
 
   if index < splitWord.len:
     return (splitWord[index], ErrorOut()) #equivalent of nil. empty or default object
@@ -107,7 +109,7 @@ proc isIgnore*(hashLine, ignorableChar: string): bool =
       return true
   return false
     
-
+#This function is meant for the tool only
 proc parseTruncate*(truncInput: string): (int, string) =
   let valSplit = truncInput.split()
   let index = parseInt(valSplit[0].strip(chars={'{','}'}))

@@ -50,7 +50,7 @@ proc identifyHash*(hash, extCtext, extHex, truncLine: string, ignore: bool, form
             quit(1)
           echo csvFormat(identify(truncRes))
         elif format == "json":
-          #handle erro for json
+          #handle error for json
           if error.status == "error":
             echo jsonErrOut(error)
             return

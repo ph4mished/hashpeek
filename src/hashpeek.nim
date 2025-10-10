@@ -1,6 +1,9 @@
 import strformat, terminal, os, strutils
 import libpeek/file_analyze
 import help, cli_flag, helper_func
+
+import libpeek/[analyze, outfmt, file_analyze, extract]
+export analyze, outfmt, file_analyze, extract
 # [INFO] = CYAN
 # [ERROR] = RED
 # [SKIP] = yellow

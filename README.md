@@ -1,7 +1,6 @@
-<h2>🔍 <strong>Why Hashpeek</strong></h2>
+ <h2>🔍 <strong>Why Hashpeek</strong></h2>
 
-<p>One will wonder why need a new hash identifier (hashpeek) when there are so many hash identifiers out there. <strong>You are right to question this tool.</strong></p>
-
+<p>One will wonder why need a new hash identifier (hashpeek) when there are so many hash identifiers out there. <strong>You are right to question this tool.</strong></p
 <p>There are many hash identifiers out there but they seem to have one limitation or the other.</p>
 
 <p><strong>Some don't accept input via stdin</strong> making it somehow difficult for scripting.</p>
