@@ -1,8 +1,10 @@
 
 $./hashpeek -t '$6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDqBTmpV8JNlIKSO4yvtAjUv32PB1' -pb
+#the header should be centered
 ==================================
     HASH IDENTIFICATION REPORT
 ==================================
+#Warning should removed, until hashpeek is ready, it wont be released
 Warn: Hashpeek is under-development at the moment: Neglect displayed confidence threshold
 PROBING SUMMARY
 ├─ Hashes Found: 2
@@ -10,6 +12,8 @@ PROBING SUMMARY
    ├─ $6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDqBTmpV8JNlIKSO4yvtAjUv32PB1
    └─ t9wyi8ZzsibyQGkw
 
+#remember to fix confidence value
+#add more meta data like limitations and use cases
 [CANDIDATE 1: SHA512 Crypt - 70% CONFIDENCE]
 ├─ Characteristics: $6$ prefix, includes salt, 96-106 chars
 ├─ Common Sources: @["/etc/shadow", "modern Linux systems"]
@@ -156,44 +160,8 @@ Bear with us as we prune the tool.
 
 
 
-$nth -t a95c9b6ab0e338f225f5f7595c7674b7
-https://twitter.com/bee_sec_san
-https://github.com/HashPals/Name-That-Hash 
-    
-
-a95c9b6ab0e338f225f5f7595c7674b7
-
-Most Likely 
-MD5, HC: 0 JtR: raw-md5 Summary: Used for Linux Shadow files.
-MD4, HC: 900 JtR: raw-md4
-NTLM, HC: 1000 JtR: nt Summary: Often used in Windows Active Directory.
-Domain Cached Credentials, HC: 1100 JtR: mscach
-
-Least Likely
-Domain Cached Credentials 2, HC: 2100 JtR: mscach2 Double MD5, HC: 2600  
-Tiger-128,  Skein-256(128),  Skein-512(128),  Lotus Notes/Domino 5, HC: 8600 
-JtR: lotus5 md5(md5(md5($pass))), HC: 3500 Summary: Hashcat mode is only 
-supported in hashcat-legacy. md5(uppercase(md5($pass))), HC: 4300  
-md5(sha1($pass)), HC: 4400  md5(utf16($pass)), JtR: dynamic_29 
-md4(utf16($pass)), JtR: dynamic_33 md5(md4($pass)), JtR: dynamic_34 Haval-128, 
-JtR: haval-128-4 RIPEMD-128, JtR: ripemd-128 MD2, JtR: md2 Snefru-128, JtR: 
-snefru-128 DNSSEC(NSEC3), HC: 8300  RAdmin v2.x, HC: 9900 JtR: radmin Cisco Type
-7,  BigCrypt, JtR: bigcrypt 
 
 
-
-
- $nth -t '$6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDqBTmpV8JNlIKSO4yvtAjUv32PB1'
-
-https://twitter.com/bee_sec_san
-https://github.com/HashPals/Name-That-Hash 
-    
-
-$6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDq
-BTmpV8JNlIKSO4yvtAjUv32PB1
-
-Most Likely 
-SHA-512 Crypt, HC: 1800 JtR: sha512crypt
 
 ==================================
     HASH IDENTIFICATION REPORT
@@ -280,6 +248,19 @@ LIMITATIONS OF MySQL323
 ├─ John Format: mysql
 └─ Note: 
    ├─ LIMITATIONS OF MySQL323
+   ├─ Can be broken in seconds
+   ├─ Susceptible to rainbow tables
+   ├─ Limited to 8 character passwords
+   └─ Deprecated since MySQL 4.1
+
+#WHat of this too
+#id prefer this for consistency
+[CANDIDATE 3: MySQL323 - 70% CONFIDENCE]
+├─ Characteristics: 16 chars typical, but can be padded to 32 (hexadecimals)
+├─ Common Sources: @["old MySQL databases", "legacy systems", "MySQL user tables", "database dumps"]
+├─ Hashcat Mode: 200
+├─ John Format: mysql
+└─ Limitations:
    ├─ Can be broken in seconds
    ├─ Susceptible to rainbow tables
    ├─ Limited to 8 character passwords
