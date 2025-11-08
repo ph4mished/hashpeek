@@ -1,47 +1,27 @@
 import os, strformat, terminal, strutils
-#this file was created as a result of recursive dependency errors
-
-#[proc identifyDefault*(identResult: AnalysisResult): string =
-  if not identResult.found:
-    result.add(ifColor(fgRed, "[ERROR] ") & ifColor(fgGreen, "Unknown hash format\n"))
-    #result.add ansiStyleCode(styleBright) & ansiForeGroundColorCode(fgRed) & "[ERROR] " & ansiResetCode
-    #result.add ansiStyleCode(styleBright) & ansiForeGroundColorCode(fgGreen) & "Unknown hash format\n" & ansiResetCode
-  for hashalgo in identResult.algorithms:
-    withColors:
-      result.add(ifColor(fgBlue, fmt"\n  {hashalgo}") & ifColor(fgMagenta, "\n    Hashcat Mode: ") & ifColor(fgYellow, hashalgo.hashcat) & ifColor(fgGreen, "\n    John Format: ") & ifColor(fgYellow, fmt "{hashalgo.john}\n"))
-      #result.add(ansiStyleCode(styleBright) & ansiForeGroundColorCode(fgBlue) & "\n  " & hashalgo.name & ansiResetCode)
-      #result.add(ansiStyleCode(styleBright) & ansiForeGroundColorCode(fgMagenta) & "\n    Hashcat Mode: " & ansiResetCode)
-      #result.add(ansiStyleCode(styleBright) & ansiForeGroundColorCode(fgYellow) & hashalgo.hashcat & ansiResetCode) 
-      #result.add(ansiStyleCode(styleBright) & ansiForeGroundColorCode(fgGreen) & "\n    John Format: " & ansiResetCode)
-      #result.add(ansiStyleCode(styleBright) & ansiForeGroundColorCode(fgYellow) & hashalgo.john  & "\n" & ansiResetCode) ]#
+import spectra
 
 type 
   Flags* = object
+    enc*: string
     file*: string
+    hash*: string
+    trunc*: string
     help*: bool
-    #ignore flag will accept no strings. it needs to be a bool
     ignore*: bool
     version*: bool
     noColor*: bool
     json*: bool
     csv*: bool
     verbose*: bool
-    hash*: string
-    #extract hex flag will also later  be considered a bool. so that user wouln't need to specify length
-    #or extract length with no value means default will be used
-    #its considered a string so that it extracts using 6,7,9 or 9-12 or 12
-    extHex*: string
-    extCtext*: string
-    trunc*: string
+    probe*: bool
+    minEnt*: float
+
+    
 
 var flags*: Flags
 
-
-proc ifColor*(frontColor: ForegroundColor, word: auto): string =
-  if not flags.noColor and stdout.isatty():
-    result.add(ansiStyleCode(styleBright) & ansiForegroundColorCode(frontColor) & $word & ansiResetCode)
-  else:
-    return $word
+colorToggle = not flags.noColor and stdout.isatty()
     
 
 
@@ -50,54 +30,36 @@ var i = 0
 while i < paramCount():
   let a = paramStr(i+1)
   case a 
+  of "-enc", "--encoding":
+    if i+1 >= paramCount():
+      paint fmt "[bold fg=red][ERROR] Missing encoding type after argument: [fg=green]{a}[reset]"
+      quit(1)
+    flags.enc = paramStr(i+2)
+    i = i+2
   of "-f", "--file":
     if i+1 >= paramCount():
-      stderr.writeLine(ifColor(fgRed, "[ERROR] Missing filename after argument: ") & ifColor(fgGreen, fmt "{a}"))
-      stderr.flushFile()
+      paint fmt "[bold fg=red][ERROR] Missing filename after argument: [fg=green]{a}[reset]"
       quit(1)
     flags.file = paramStr(i+2)
     i = i+2
-  of "-x", "--hash":
+  of "-t", "--text":
     if i+1 >= paramCount():
-      stderr.writeLine(ifColor(fgRed, "[ERROR] Missing hash string after argument: ") & ifColor(fgGreen, fmt "{a}"))
-      stderr.flushFile()
+      paint fmt "[bold fg=red][ERROR] Missing hash string after argument: [fg=green]{a}[reset]"
       quit(1)
     flags.hash = paramStr(i+2)
     i = i+2
   #[of "-i", "--ignore":
     if i+1 >= paramCount():
-      stderr.writeLine(ifColor(fgRed, "[ERROR] Missing value after argument: ") & ifColor(fgGreen, fmt "{a}"))
+      stderr.writeLine(ifColor(fg=red, "[ERROR] Missing value after argument: ") & ifColor(fgGreen, fmt "{a}"))
       stderr.flushFile()
       quit(1)
     flags.ignore = paramStr(i+2)
     i = i+2]#
-  of "--trunc":
+  of "-fd", "--field":
     if i+1 >= paramCount():
-      stderr.writeLine(ifColor(fgRed, "[ERROR] Missing value after argument: ") & ifColor(fgGreen, fmt "{a}"))
-      stderr.flushFile()
+      paint fmt "[bold fg=red][ERROR] Missing value after argument: [fg=green]{a}[reset]"
       quit(1)
     flags.trunc = paramStr(i+2)
-    i = i+2
-  of "-e-ctext", "--extract-context":
-    if i+1 >= paramCount():
-      stderr.writeLine(ifColor(fgRed, "[ERROR] Missing value after argument: ") & ifColor(fgGreen, fmt "{a}"))
-      stderr.flushFile()
-      quit(1)
-    flags.extCtext = paramStr(i+2)
-    i = i+2
-  of "-e-hex", "--extract-hex":
-    if i+1 >= paramCount():
-      #use this part for default
-      #default values are 4-256
-      stderr.writeLine(ifColor(fgRed, "[ERROR] Missing value after argument: ") & ifColor(fgGreen, fmt "{a}"))
-      stderr.flushFile()
-      quit(1)
-      #flags.extHex = paramStr(i+1)
-      #flags.extHex = "4-256"
-      #echo flags.extHex
-      #i = i+1
-    #else:
-    flags.extHex = paramStr(i+2)
     i = i+2
   of "-h", "--help":
     flags.help = true
@@ -111,15 +73,23 @@ while i < paramCount():
   of "--csv":
     flags.csv = true
     inc i
+  of "-pb", "--probe":
+    flags.probe = true
+    inc i
   of "-nc", "--no-color":
     flags.noColor = true
     inc i
   of "-i", "--ignore":
     flags.ignore = true
     inc i
+  of "-me", "--min-entropy":
+    if i+1 >= paramCount():
+      paint fmt "[bold fg=red][ERROR] Missing minimum entropy value after argument: [fg=green]{a}[reset]"
+      quit(1)
+    flags.minEnt = parseFloat(paramStr(i+2))
+    i = i+2
   else:
-    stderr.write(ifColor(fgRed, "[ERROR] Unknown argument:") & ifColor(fgGreen,  fmt " {a}\n"))
-    stderr.flushFile()
+    paint fmt "[bold fg=red][ERROR] Unknown argument: [fg=green]{a}[reset]"
     inc i
 
   #[

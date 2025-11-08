@@ -7,7 +7,7 @@ One will wonder, **"why a new hash identifier (hashpeek), aren't there enough of
 **You are right to question the existence of this tool**.
 
 There are many hash identifiers out there but they seem to have one limitation or the other.
-1. Some don't accept input via stdin making it somehow difficult for scripting.
+1. [bold cyan] Some don't accept input via stdin making it somehow difficult for scripting.[/bold cyan]
 
 2. Others too show outputs that are a hassle to grep (you need regex gymnastics to grep).
 
@@ -47,6 +47,33 @@ for hashlago in identifiedResults.algorithms:
   #print john format
   echo hashalgo.john
 ```
+
+## Identification in stream
+``` nim
+import hashpeek
+
+#Hashpeek mostly extracts hashes before identification, the stream identification function was created for this reason to help identify hashes in files while maintaining its simplicity and flexibility
+let hashes = @["0689e590864cee67b037c8f4c390a75a192bb01160cc9c21374afb12", "2d6d67d91d0badcdd06cbbba1fe11538a68a37ec9c2e26457ceff12b", "c5ae6e4ed4d8c0aec0f671978451411c37c765b76cda4050152e85a0"]
+
+for hash in hashes:
+  #this function identifies, accumulates and sorts the results in default format
+  streamIdentify(hash)
+  #always remember to flush
+flushHashGroup()
+
+  #for outputs in jsonFormat
+  streamIdentify(input, jsonFormat)
+flushHashGroup()
+
+  #for output in csv format
+  streamIdentify(input, csvFormat)
+flushHashGroup()
+
+  #you can use your custom output format too
+  #Remember: flushing remains a necessity
+
+```
+
 ## Extraction
 ### hash extraction from structured data
 ``` nim
@@ -73,18 +100,18 @@ else:
 # parseExtractToSeq is a function that accepts range of numbers, comma-separated numbers etc. this function makes it easier to increase length values for extraction without manually typing "1,2,3,..44"
 var extractedHashes: seq[string]
 let rangeExtract = parseExtractToSeq("10-99")
-let contextExtract = parseContextToSeq("password, hash, md5,")
+let contextExtract = parseContextToSeq("password, token, md5,")
 #or just directly
-#let contextExtract = @["password", "hash", "md5"]
+#let contextExtract = @["password", "token", "md5"]
 let input = """# User login attempts
 [INFO] 2025-08-25T10:00:01Z New user 'alice' created. Temp pass: welcome123
-[DEBUG] 2025-08-25T10:01:12Z Session token: ####5f4dcc3b5aa765d61d8327deb882cf99###
+[DEBUG] 2025-08-25T10:01:12Z Session token: 5f4dcc3b5aa765d61d8327deb882cf99
 [ERROR] 2025-08-25T10:02:15Z Password reset failed for 'svc_user'. Hash: d6e0d2c1a5e89c5c7b6b9bccb8b8b8b8b8b8b8b8
 Random note: nothing to see here 12345
-[WARN] 2025-08-25T10:03:33Z User 'bob' failed login. Token: ####e99a18c428cb38d5f260853678922e03###
+[WARN] 2025-08-25T10:03:33Z User 'bob' failed login. Token: e99a18c428cb38d5f260853678922e03
 Some debug info: 0x4f2a1b
-[INFO] Miscellaneous logs ####c3fcd3d76192e4007dfb496cca67e13b###
-# End of log#
+[INFO] Miscellaneous logs c3fcd3d76192e4007dfb496cca67e13b
+End of log
 """
 
 var myExtractor = Extractor(

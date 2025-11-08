@@ -1,0 +1,377 @@
+
+$./hashpeek -t '$6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDqBTmpV8JNlIKSO4yvtAjUv32PB1' -pb
+==================================
+    HASH IDENTIFICATION REPORT
+==================================
+Warn: Hashpeek is under-development at the moment: Neglect displayed confidence threshold
+PROBING SUMMARY
+├─ Hashes Found: 2
+└─ Extracted Hashes: 
+   ├─ $6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDqBTmpV8JNlIKSO4yvtAjUv32PB1
+   └─ t9wyi8ZzsibyQGkw
+
+[CANDIDATE 1: SHA512 Crypt - 70% CONFIDENCE]
+├─ Characteristics: $6$ prefix, includes salt, 96-106 chars
+├─ Common Sources: @["/etc/shadow", "modern Linux systems"]
+├─ Hashcat Mode: 1800
+├─ John Format: sha512crypt
+└─ Note: 
+
+
+
+[CANDIDATE 1: Cisco-PIX(MD5) - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 2400
+├─ John Format: pix-md5
+└─ Note: 
+
+INFO: Hashpeek development plans are to make hash identification easier and sensible to users
+Hashpeek focus:
+add common sources and characteristics, limitations, and notes about hashes. This is not an easy work
+Bear with us as we prune the tool.
+
+$./hashpeek -t a95c9b6ab0e338f225f5f7595c7674b7
+==================================
+    HASH IDENTIFICATION REPORT
+==================================
+Warn: Hashpeek is under-development at the moment: Neglect displayed confidence threshold
+[CANDIDATE 1: MD5 - 70% CONFIDENCE]
+├─ Characteristics: 32 chars, hexadecimal, unsalted
+├─ Common Sources: @["web applications", "file verification", "legacy systems"]
+├─ Hashcat Mode: 0
+├─ John Format: raw-md5
+└─ Note: 
+
+[CANDIDATE 2: NTLM - 70% CONFIDENCE]
+├─ Characteristics: 32 chars, Windows authentication, based on MD4
+├─ Common Sources: @["Windows SAM", "Active Directory", "LSASS memory"]
+├─ Hashcat Mode: 1000
+├─ John Format: nt
+└─ Note: Use if source is Windows system
+
+[CANDIDATE 3: LM - 70% CONFIDENCE]
+├─ Characteristics: 32 chars, all uppercase, no lowercase
+├─ Common Sources: @["Windows SAM", "legacy Windows systems"]
+├─ Hashcat Mode: 3000
+├─ John Format: lm
+└─ Note: Use if source is Windows system
+
+[CANDIDATE 4: MD4 - 70% CONFIDENCE]
+├─ Characteristics: 32 chars, legacy Microsoft systems
+├─ Common Sources: @["Old Windows systems", "legacy applications"]
+├─ Hashcat Mode: 900
+├─ John Format: raw-md4
+└─ Note: 
+
+[CANDIDATE 5: Double MD5 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 2600
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 6: MD2 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: md2
+└─ Note: 
+
+[CANDIDATE 7: RIPEMD-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: ripemd-128
+└─ Note: 
+
+[CANDIDATE 8: BLAKE3-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 9: FNV-1-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 10: Murmur3-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 11: Haval-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: haval-128-4
+└─ Note: 
+
+[CANDIDATE 12: SNEFRU-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: snefru-128
+└─ Note: 
+
+[CANDIDATE 13: Skein256-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 14: Skein512-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 15: Tiger-128 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 16: Tiger128-3 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note:
+
+INFO: Hashpeek development plans are to make hash identification easier and sensible to users
+Hashpeek focus:
+add common sources and characteristics, limitations, and notes about hashes. This is not an easy work
+Bear with us as we prune the tool.
+
+
+
+
+$nth -t a95c9b6ab0e338f225f5f7595c7674b7
+https://twitter.com/bee_sec_san
+https://github.com/HashPals/Name-That-Hash 
+    
+
+a95c9b6ab0e338f225f5f7595c7674b7
+
+Most Likely 
+MD5, HC: 0 JtR: raw-md5 Summary: Used for Linux Shadow files.
+MD4, HC: 900 JtR: raw-md4
+NTLM, HC: 1000 JtR: nt Summary: Often used in Windows Active Directory.
+Domain Cached Credentials, HC: 1100 JtR: mscach
+
+Least Likely
+Domain Cached Credentials 2, HC: 2100 JtR: mscach2 Double MD5, HC: 2600  
+Tiger-128,  Skein-256(128),  Skein-512(128),  Lotus Notes/Domino 5, HC: 8600 
+JtR: lotus5 md5(md5(md5($pass))), HC: 3500 Summary: Hashcat mode is only 
+supported in hashcat-legacy. md5(uppercase(md5($pass))), HC: 4300  
+md5(sha1($pass)), HC: 4400  md5(utf16($pass)), JtR: dynamic_29 
+md4(utf16($pass)), JtR: dynamic_33 md5(md4($pass)), JtR: dynamic_34 Haval-128, 
+JtR: haval-128-4 RIPEMD-128, JtR: ripemd-128 MD2, JtR: md2 Snefru-128, JtR: 
+snefru-128 DNSSEC(NSEC3), HC: 8300  RAdmin v2.x, HC: 9900 JtR: radmin Cisco Type
+7,  BigCrypt, JtR: bigcrypt 
+
+
+
+
+ $nth -t '$6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDqBTmpV8JNlIKSO4yvtAjUv32PB1'
+
+https://twitter.com/bee_sec_san
+https://github.com/HashPals/Name-That-Hash 
+    
+
+$6$t9wyi8ZzsibyQGkw$wzWvbfAEZ5aq8YUduTdJe8MWgiDRtz0ZlBWckh17TjheFKDLevFGrdOSRcDq
+BTmpV8JNlIKSO4yvtAjUv32PB1
+
+Most Likely 
+SHA-512 Crypt, HC: 1800 JtR: sha512crypt
+
+==================================
+    HASH IDENTIFICATION REPORT
+==================================
+
+[CANDIDATE 1: DES(Oracle) - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 3100
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 2: LM - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 3000
+├─ John Format: lm
+└─ Note: 
+
+[CANDIDATE 3: MySQL323 - 70% CONFIDENCE]
+├─ Characteristics: 16 chars typical, but can be padded to 32 (hexadecimals)
+├─ Common Sources: @["old MySQL databases", "legacy systems", "MySQL user tables", "database dumps"]
+├─ Hashcat Mode: 200
+├─ John Format: mysql
+└─ Note: 
+LIMITATIONS OF MySQL323
+├─ Can be broken in seconds
+├─ Susceptible to rainbow tables
+├─ Limited to 8 character passwords
+└─ Deprecated since MySQL 4.1
+
+
+[CANDIDATE 4: CRC-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 5: FNV-1-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 6: FNV-1a-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 7: Half-MD5 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 5100
+├─ John Format: --
+└─ Note: 
+
+
+==================================
+    HASH IDENTIFICATION REPORT
+==================================
+
+[CANDIDATE 1: DES(Oracle) - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 3100
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 2: LM - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 3000
+├─ John Format: lm
+└─ Note: 
+
+[CANDIDATE 3: MySQL323 - 70% CONFIDENCE]
+├─ Characteristics: 16 chars typical, but can be padded to 32 (hexadecimals)
+├─ Common Sources: @["old MySQL databases", "legacy systems", "MySQL user tables", "database dumps"]
+├─ Hashcat Mode: 200
+├─ John Format: mysql
+└─ Note: 
+   ├─ LIMITATIONS OF MySQL323
+   ├─ Can be broken in seconds
+   ├─ Susceptible to rainbow tables
+   ├─ Limited to 8 character passwords
+   └─ Deprecated since MySQL 4.1
+
+
+[CANDIDATE 4: CRC-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 5: FNV-1-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 6: FNV-1a-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 7: Half-MD5 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 5100
+├─ John Format: --
+└─ Note: 
+
+
+==================================
+    HASH IDENTIFICATION REPORT
+==================================
+
+[CANDIDATE 1: DES(Oracle) - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 3100
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 2: LM - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 3000
+├─ John Format: lm
+└─ Note: 
+
+[CANDIDATE 3: MySQL323 - 70% CONFIDENCE]
+├─ Characteristics: 16 chars typical, but can be padded to 32 (hexadecimals)
+├─ Common Sources: @["old MySQL databases", "legacy systems", "MySQL user tables", "database dumps"]
+├─ Hashcat Mode: 200
+├─ John Format: mysql
+└─ Note: 
+   ├─ LIMITATIONS OF MySQL323
+   ├─ Can be broken in seconds
+   ├─ Susceptible to rainbow tables
+   ├─ Limited to 8 character passwords
+   └─ Deprecated since MySQL 4.1
+
+
+[CANDIDATE 4: CRC-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 5: FNV-1-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 6: FNV-1a-64 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: --
+├─ John Format: --
+└─ Note: 
+
+[CANDIDATE 7: Half-MD5 - 70% CONFIDENCE]
+├─ Characteristics: 
+├─ Common Sources: @[]
+├─ Hashcat Mode: 5100
+├─ John Format: --
+└─ Note: 
+
+

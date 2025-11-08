@@ -1,54 +1,162 @@
-import terminal
-import cli_flag
+import terminal, tables, re, strutils
+import cli_flag, hashpeek/hash_database
+import spectra
 
+#UNSUPPORTED FLAGS (WITHOUT FUNCTIONALITIES) ARE COMMENTED OUT
+colorToggle = not flags.noColor and stdout.isatty()
+#at the moment, jeml (Jonathan Extraction Minimal Language) is in the making to help make hashpeek 
+#context extraction engine flexible
 
+#flags to add
+#filters out low entropy tokens. helps drop simple repetitive data
+#encoding handling = this is to decode hashes or find those encoded hashes = -enc <encoding format> or --encoding <encoding format>. eg -enc base64. this extracts only base64 encoded hashes
+#-ovh or --only-valid-hashes = this extract hashes and compares them to the hash database. if the hash doesnt match, it is dropped
+#-bs <number> or --batch-size <number> = hashes processed per batch (memory control)
+#-ml <number> or --memory-limit <number> = stops if memory exceeds the given number (this flags exists to control -bs)
+#some users wouldnt like that hashpeek does automatic exit when it meets {},() during context exrraction
+#-cd <chars> or --custom-delimiters<chars> = additional delimiters beyond(),
+#line context = -lc <line-number> or --line-context <line-number> = will find context on given line number and proceeds on other lines for hex or other extraction
+
+#output filtering
+#-cf <number> or --confidence-filtering <number> = only shows identification with >80% confidence
+#-hcm or --hashcat-mode = output in hashcat format 
+#-jf or --john-format = output in john the ripper format
+#-sfp or --show-false-positives = highlight potential false positives in output
+#-gs or -group-similar = group similar hashes using fuzzy hashing
+#-ft <names> or --filter-types <names> = only show specific hashtypes (md5,sha1,ntlm)
+#-u or --unique = this flag accepts bool on whether to show duplicates or deduplicate results
+# if -u is false. keep duplicates
+
+#test function to get regex regex after checking length
+#split by {}
+#this is for length checks before regex pattern extraction
+
+#analysis mode options
+#-fm or --fast-mode = prioritize speed over comprehensive identification
+#-dm or --deep-mode = more thorough and slower identification
+#-st or --statistics = show extraction statistics and confidence metrics
 #divide into chunks of command that needs file argument, rulefile, hash
+#some flags look stupid and redundant so they should be removed.
+#hashpeek is bent on extraction hashes and identification(can be toggled)
+#maybe pattern extraction will be handled later
+#[
+hashpeek --help
+
+# Output:
+==================================================
+HASHPEEK 0.4.0 - Professional Hash Analysis Platform
+==================================================
+
+USAGE:
+  hashpeek [OPTIONS] [INPUT]
+
+CORE WORKFLOWS:
+  hashpeek -t HASH --analyze                    # Professional hash analysis
+  hashpeek -f FILE --extract --cracking-formats # Extract & identify from files
+  hashpeek -s PATH --context web --verbose      # Scan directories professionally
+
+INPUT OPTIONS:
+  -t, --text HASH           Analyze a single hash string
+  -f, --file FILE           Analyze hashes from a file
+  -s, --scan PATH           Recursive directory scanning for hashes
+  -pb, --probe LENGTHS      Probe for embedded hashes (e.g., 32, 32-64, 16,32,64)
+
+
+
+OUTPUT FORMATS:
+  --format FORMAT           Output format: simple, detailed, professional
+]#
 proc help*() =
-
-  stdout.write(ifColor(fgCyan, "\nUsage: ") & ifColor(fgGreen, "hashpeek [OPTIONS]\n"))
-  
-  
+  #uncomment flags when added functionality is added
+  #paint "[bold fg=green]\n=======================================================================[reset]"
+  let title = "Hashpeek 0.3.1 - Hash Extraction, Identification & Triage Tool"
+  echo "=".repeat(title.len+8)
+  echo " ".repeat(4) & title
+  echo "=".repeat(title.len+8)
+  #paint "[bold fg=cyan]   Hashpeek 0.3.1 - Hash Extraction, Identification & Triage Tool[reset]"
+  #paint "[bold fg=green]=======================================================================[reset]"
+  paint "[bold fg=magenta] Extract and identify hashes from any input: files, stdin, or text.[reset]"
+  paint "[bold fg=magenta] Supports structured analysis, entropy filtering, and multithreaded scanning.[reset]"
+  paint "[bold fg=cyan]\nUsage:  [fg=white]hashpeek [OPTIONS] [input][reset]"
+  paint "[bold fg=green] Input may be hash string, a file, path or '-' for stdin"
   #general options
-  stdout.write(ifColor(fgBlue, "[") & ifColor(fgCyan, "GENERAL OPTIONS") & ifColor(fgBlue, "]\n"))
-  stdout.write(ifColor(fgYellow, "\t-h") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--help")  & ifColor(fgGreen, " : Show this help.\n"))
-  stdout.write(ifColor(fgYellow, "\t-v") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--version") & ifColor(fgGreen, " : Show version.\n\n"))
+  paint "\n[bold fg=blue][[fg=cyan]GENERAL OPTIONS[fg=blue]][reset]"
+  paint "\t[bold fg=#FF6600]-h[fg=green], [fg=#FF6600]--help [fg=green]: Show this help.[reset]"
+  paint "\t[bold fg=#FF6600]-v[fg=green], [fg=#FF6600]--version [fg=green]: Show version information.[reset]"
+  #paint "\t[bold fg=#FF6600]-q[fg=green], [fg=#FF6600]--quiet [fg=green]: Suppress non-critical output.[reset]"
 
 
-  #stdin options
-  stdout.write(ifColor(fgBlue, "[") & ifColor(fgCyan, "STDIN MODE OPTIONS") & ifColor(fgBlue, "]\n"))
-  stdout.write(ifColor(fgYellow, "\t-x - ") & ifColor(fgGreen, "or ") & ifColor(fgYellow, "--hash -") & ifColor(fgGreen, " : Analyze hashes directly from stdin.\n"))
-  stdout.write(ifColor(fgYellow, "\t-f -") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--file - ") & ifColor(fgGreen, " : Analyze hashes from files via stdin.\n\n"))
-  
-  
   #input options
-  stdout.write(ifColor(fgBlue, "[") & ifColor(fgCyan, "INPUT OPTIONS") & ifColor(fgBlue, "]\n"))
-  stdout.write(ifColor(fgYellow, "\t-x <hashstring>") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--hash <hashstring>")  & ifColor(fgGreen, " : Analyze a single hash string.\n"))
-  stdout.write(ifColor(fgYellow, "\t-f <path/to/file>") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--file <path/to/file>") & ifColor(fgGreen, " : Analyze hashes from a file.\n\n"))
+  paint "\n[bold fg=blue][[fg=cyan]INPUT OPTIONS[fg=blue]][reset]"
+  paint "\t[bold fg=#FF6600]-t[fg=green], [fg=#FF6600]--text HASH [fg=green]: Analyze a single hash.[reset]"
+  paint "\t[bold fg=#FF6600]-f[fg=green], [fg=#FF6600]--file FILE [fg=green]: Analyze file.[reset]"
 
-    #extraction and filtering options
-  stdout.write(ifColor(fgBlue, "[") & ifColor(fgCyan, "EXTRACTION & FILTERING OPTIONS") & ifColor(fgBlue, "]\n"))
-  stdout.write(ifColor(fgYellow, "\t--trunc '{N} X'") & ifColor(fgGreen, " : Capture segment at 1-based index N after splitting by delimiter X.\n") & ifColor(fgGreen, "\t(e.g. --trunc '{2} :::' extracts 'hash' from 'user:::hash:::salt' where ':::' is the delimiter).\n"))
- 
-  #the ignore flag will be a bool which will mute error messages from appearing on stderr
-  #change its help description when this change occurs
-  stdout.write(ifColor(fgYellow, "\t-i") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--ignore")  & ifColor(fgGreen, " : Ignore or mute truncation errors to ensure clean results\n"))
-  stdout.write(ifColor(fgYellow, "\t-e-hex <length>") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--extract-hex <length>") & ifColor(fgGreen, " : Extract hex hashes from messy text/logs using user-given length or range of lengths.\n"))
-  stdout.write(ifColor(fgGreen, "\te.g. '-e-hex 16' this means it scans the file for hashes that have a length 16 only.\n"))
-  stdout.write(ifColor(fgBlue, "\tNote: ") & ifColor(fgGreen, "-e-hex flag supports single numbers {-e-hex 8}, range of numbers {-e-hex 32-56} and numbers separated by commas {-e-hex 32,16,56}.\n"))
-  stdout.write(ifColor(fgYellow, "\t-e-ctext <contexts/words>") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--extract-context <contexts/words>") & ifColor(fgGreen, " : Extract hashes from messy text/logs using user provided contexts.\n"))
-  stdout.write(ifColor(fgGreen, "\te.g. '-e-ctext 'password, hash' ' this means it scans the file for words that corresponds to the given context 'password', 'hash' and returns it value.\n"))
-  #to avoid wasting time, the case variant generator will use only "upper, lower and title case toggling" instead of allcase generator
-  stdout.write(ifColor(fgBlue, "\tNote: ") & ifColor(fgGreen, "The case of the contexts that will be used by -e-ctext will be handled implicitly. Meaning -e-ctext is case insensitive in its extraction.\n\n"))
-  
-  
-  
-  #output and formatting options
-  stdout.write(ifColor(fgBlue, "[") & ifColor(fgCyan, "OUTPUT & FORMATTING OPTIONS") & ifColor(fgBlue, "]\n"))
-  stdout.write(ifColor(fgYellow, "\t--json")  & ifColor(fgGreen, " : Outputs results in JSON format.\n"))
-  stdout.write(ifColor(fgYellow, "\t--csv") & ifColor(fgGreen, " : Outputs results in CSV format.\n"))
-  stdout.write(ifColor(fgYellow, "\t-nc") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--no-color") & ifColor(fgGreen, " : Disable coloured output.\n"))
-  stdout.write(ifColor(fgYellow, "\t-vb") & ifColor(fgGreen, " or ") & ifColor(fgYellow, "--verbose") & ifColor(fgGreen, " : Show detailed results per hash (verbose).\n\n"))
-  stdout.flushFile()
+  #extraction  options
+  #-fd and -pb can be used together in one command
+  #-pb should directly extract hashes hence it doesnt need -ovh
+  #-pb should check if given file is binary, and convert to strings to extract hashes
+  #TODAY I'M ON EXTRACTION FLAGS (TO CREATE FUNCTIONALITY FOR IT)
+  paint "\n[bold fg=blue][[fg=cyan]EXTRACTION OPTIONS[fg=blue]][reset]"
+  paint "\t[bold fg=#FF6600]-fd[fg=green], [fg=#FF6600]--field '{N} X'[fg=green]: Capture segment at 1-based index N after splitting by delimiter X.[reset]"
+  paint "\t[bold fg=#FF6600]-pb[fg=green], [fg=#FF6600]--probe[fg=green]: Probe data for embedded hashes(aggressive).[reset]"
+  #paint "\t[bold fg=#FF6600]-ni[fg=green], [fg=#FF6600]--no-identify[fg=green]: Only extract, skip identification.[reset]"
+  #hex encoded words vs hex-hashes. when decoding, hex-hashes gives encoded binary characters instead of utf-8 readable char. hex encoded words gives out chars
+  #paint "\t[bold fg=#FF6600]-enc[fg=green], [fg=#FF6600]--encode <type> [fg=green]: Extracts encoded data.\n Supported types: base64, hex[reset]"
 
+  #filtering extraction
+  #[paint "\n[bold blue][[cyan]FILTERING OPTIONS[blue]][reset]"
+  paint "\t[bold fg=#FF6600]-me[fg=green], [fg=#FF6600]--min-entropy <float>[fg=green]: Minimum entropy to accept candidate.[reset]"
+  paint "\t[bold fg=#FF6600]-mr[fg=green], [fg=#FF6600]--max-results N[fg=green]: Limit to top N results.[reset]"
+  #paint "\t[bold fg=#FF6600]-ign[fg=green], [fg=#FF6600]--ignore-numeric <file>[fg=green]: Skip numeric-only strings.[reset]"
+  paint "\t[bold fg=#FF6600]-sw[fg=green], [fg=#FF6600]--stop-words <file>[fg=green]: File with stop words for context extraction boundaries.[reset]"
+  paint "\t[bold fg=#FF6600]-k[fg=green], [fg=#FF6600]--keep-duplicates[fg=green]: Maintains duplicate extracted hashes.[reset]"
+  paint "\t[bold fg=#FF6600]-cf[fg=green], [fg=#FF6600]--confidence-threshold N[fg=green]: Only show confidence >= N%.[reset]"]#
+
+  #performance
+  #[paint "\n[bold blue][[cyan]PERFORMANCE OPTIONS[blue]][reset]"
+  paint "\t[bold fg=#FF6600]-t[fg=green], [fg=#FF6600]--threads <N>[fg=green]: Number of worker threads.[reset]"
+  #-ml protects ram by limiting its usage. what happens to cpu (it needs to be added but later)
+  #without memory limit, hashpeek should be smart enough to use 60%-80% of RAM. remember to keep it to avoid crashes
+  paint "\t[bold fg=#FF6600]-ml[fg=green], [fg=#FF6600]--memory-limit MB[fg=green]: Maximum RAM usage.[reset]"
+  #-cpu, -cpu-limit <N%>
+  #cpu limit will be required if hashpeek moves to chunking because cpu will stay busy if threading is added
+  paint "\t[bold fg=#FF6600]-prog[fg=green], [fg=#FF6600]--progress[fg=green]: Show progress meter.[reset]"]#
+
+
+  paint "\n[bold fg=blue][[fg=cyan]OUTPUT & FORMATTING OPTIONS[fg=blue]][reset]"
+  paint "\t[bold fg=#FF6600]--json[fg=green]: Outputs results in JSON format.[reset]"
+  paint "\t[bold fg=#FF6600]--csv[fg=green]: Outputs results in CSV format.[reset]"
+  paint "\t[bold fg=#FF6600]-nc[fg=green], [fg=#FF6600]--no-color [fg=green]: Disable coloured output.[reset]"
+  #paint "\t[bold fg=#FF6600]-vb[fg=green], [fg=#FF6600]--verbose [fg=green]: Show detailed results per hash (verbose).\n[reset]"
+
+  #[paint "\n[bold fg=blue][[cyan]EXTENDED HASH SUPPORT[fg=blue]][reset]"
+  paint "\t[bold fg=#FF6600]-db[fg=green], [fg=#FF6600]--database <file>[fg=green]: Load custom hash database (JSON).[reset]"]#
 
   #examples
+  #paint "\n\t\t\t\t[bold fg=blue][[cyan]EXAMPLES[fg=blue]][reset]"
+  #paint "\t[bold fg=#2882BE]#Single hash identification[reset]"
+  #paint "\t[bold fg=yellow]hashpeek [fg=green]-t '87c8cdddb2b4ea61c2d2752c24eb2e1f1ff05500173f504c4cda5291'[reset]"
+
+  #paint "\n\t[bold fg=#2882BE]#Extract from log with context[reset]"
+  #paint "\t[bold fg=yellow]hashpeek [fg=green]-f dump.txt -e-ctext 'password,token' -me 3.4[reset]"
+
+  #paint "\n\t[bold fg=#2882BE]#Field extraction from structured data[reset]"
+  #paint "\t[bold fg=yellow]hashpeek [fg=green]-f /etc/passwd -fd '{2} :' -j[reset]"
+  #paint "\t[bold fg=yellow]hashpeek [fg=green]-f data.csv -fd '{3} ,' -hc[reset]"
+
+  #paint "\n\t[bold fg=#2882BE]#Probe for embedded hashes in binary data[reset]"
+  #paint "\t[bold fg=yellow]hashpeek [fg=green]-f memory.dmp -pb  -me 3.8[reset]"
+  #paint "\t[bold fg=yellow]hashpeek [fg=green]-f binary_file -pb [reset]"
+
+  #paint "\n\t[bold fg=#2882BE]#Large file processing[reset]"
+  #paint "\t[bold fg=yellow]hashpeek [fg=green]-f huge_dump.txt -mr 500 --thread 4 --json [fg=yellow]> findings.json[reset]"
+  
+
+  #notes
+  paint "\n[bold fg=cyan]\t\t\t\t\tNOTES[reset]"
+  paint "\t[bold  fg=blue]-[fg=green] Probing extracts all hash sequences - use with [fg=yellow]--min-entropy[fg=green] to reduce false positives[reset]"
+  #paint "\t[bold fg=blue]-[fg=green] Hashpeek removes duplicate hashes by default: use [fg=yellow]-k[fg=green] to keep duplicates"
+  #paint "\t[bold  fg=blue]-[fg=green] Use --probe for binary files, memory dumps and forensic analysis[reset]"
+  paint "\t[bold  fg=blue]-[fg=green] Use --file for structured data like config files and databases[reset]"
+  paint "\t[bold fg=blue]-[fg=green] Custom hash databases must be JSON format[reset]"
+  paint "\t[bold fg=blue]-[fg=green] Threading (-t) significantly speeds up --probe operations on large files[reset]\n"

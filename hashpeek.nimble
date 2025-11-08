@@ -10,5 +10,5 @@ bin           = @["hashpeek"]
 
 
 # Dependencies
-
-requires "nim >= 2.2.4"
+requires "nim >= 2.2.4", "spectra"
+#requires "sysinfo >= version_unknown" #sysinfo will be used to check free, total, used ram.

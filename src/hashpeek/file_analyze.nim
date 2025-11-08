@@ -1,8 +1,15 @@
-import strformat, strutils, tables, os, terminal
+#[import strformat, strutils, tables, os, terminal
 import outfmt, analyze, ../cli_flag
+import ../spectra
+
+
+colorEnabled = not flags.noColor and stdout.isatty()
 
 proc percentage(num, total: int): float = 
     return float(num/total)*100.0
+
+
+  #for verbose mode. refer work to direct hash analysis
 
 
 #[proc fileIdentifyGroupWithExtract*(hash_file, extCtext: string, extHex: int) = 
@@ -61,8 +68,9 @@ proc fileIdentifyGroup*(hash_file: string) =
     hash_counts = initTable[string, int]()
     totalHashes = 0
   if not hash_file.fileExists():
-    stderr.write(ifColor(fgRed, "[ERROR] ") & ifColor(fgGreen, fmt "{hashfile} not found\n"))
-    stderr.flushFile()
+    paint fmt "[bold red][ERROR] {hashfile} not found[reset]"
+    #stderr.write(ifColor(fgRed, "[ERROR] ") & ifColor(fgGreen, fmt "{hashfile} not found\n"))
+    #stderr.flushFile()
     return
 
   #should check if its a directory
@@ -88,18 +96,15 @@ proc fileIdentifyGroup*(hash_file: string) =
       else:
         hash_counts[hashtype] = 1
   if total_hashes > 0:
-    stdout.write(ifColor(fgCyan, "\n[INFO]") & ifColor(fgGreen, " Found ") & ifColor(fgCyan, totalHashes) & ifColor(fgGreen, " hashes in ") & ifColor(fgYellow, fmt "{hash_file}\n"))
-    stdout.flushFile()
+    paint fmt "[bold cyan][INFO] [green]Found [cyan]totalHashes [green]hashes in [yellow]{hash_file}[reset]"
     for hashtype, count in hash_counts:
       let pct = percentage(count, totalHashes)
-      stdout.write(ifColor(fgGreen, "\n{") & ifColor(fgYellow, fmt "{pct:.2f}%") & ifColor(fgGreen, "}") & ifColor(fgCyan, fmt " {count}/{totalHashes} Of The Hashes Are:\n") & fmt "{hashtype}\n")
-      stdout.flushFile()
+      paint fmt "[bold green][[yellow]{pct:.2f}%[green]] [cyan]{count}/{totalHashes} Of The Hashes Are: \n {hashtype}[reset]\n"
 
 
 proc fileIdentify*(hashFile, format: string) = 
   if not hashFile.fileExists():
-    stderr.write(ifColor(fgRed, "[ERROR] ") & ifColor(fgGreen, fmt "{hashfile} not found\n"))
-    stderr.flushFile()
+    paint fmt "[bold red][ERROR] {hashfile} not found\n[reset]"
     return
 
   let file = open(hashFile, fmRead)
@@ -108,12 +113,13 @@ proc fileIdentify*(hashFile, format: string) =
   for line in file.lines():
     if line.strip() != "":
       if format == "" or format == "default":
-        stdout.write(fgCyan, "POSSIBLE HASHTYPES")
-        stdout.flushFile()
+        paint "[bold cyan]POSSIBLE HASHTYPES[reset]"
         echo defaultFormat(identify(line.strip()))
       elif format == "json":
         echo jsonFormat(identify(line.strip()))
         return
       elif format == "csv":
         echo csvFormat(identify(line.strip()))
-      
+]#
+
+
