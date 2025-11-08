@@ -4,32 +4,20 @@ import spectra
 
 #UNSUPPORTED FLAGS (WITHOUT FUNCTIONALITIES) ARE COMMENTED OUT
 colorToggle = not flags.noColor and stdout.isatty()
-#at the moment, jeml (Jonathan Extraction Minimal Language) is in the making to help make hashpeek 
-#context extraction engine flexible
 
 #flags to add
 #filters out low entropy tokens. helps drop simple repetitive data
 #encoding handling = this is to decode hashes or find those encoded hashes = -enc <encoding format> or --encoding <encoding format>. eg -enc base64. this extracts only base64 encoded hashes
-#-ovh or --only-valid-hashes = this extract hashes and compares them to the hash database. if the hash doesnt match, it is dropped
 #-bs <number> or --batch-size <number> = hashes processed per batch (memory control)
 #-ml <number> or --memory-limit <number> = stops if memory exceeds the given number (this flags exists to control -bs)
-#some users wouldnt like that hashpeek does automatic exit when it meets {},() during context exrraction
-#-cd <chars> or --custom-delimiters<chars> = additional delimiters beyond(),
-#line context = -lc <line-number> or --line-context <line-number> = will find context on given line number and proceeds on other lines for hex or other extraction
 
 #output filtering
 #-cf <number> or --confidence-filtering <number> = only shows identification with >80% confidence
-#-hcm or --hashcat-mode = output in hashcat format 
-#-jf or --john-format = output in john the ripper format
-#-sfp or --show-false-positives = highlight potential false positives in output
 #-gs or -group-similar = group similar hashes using fuzzy hashing
 #-ft <names> or --filter-types <names> = only show specific hashtypes (md5,sha1,ntlm)
 #-u or --unique = this flag accepts bool on whether to show duplicates or deduplicate results
 # if -u is false. keep duplicates
 
-#test function to get regex regex after checking length
-#split by {}
-#this is for length checks before regex pattern extraction
 
 #analysis mode options
 #-fm or --fast-mode = prioritize speed over comprehensive identification
@@ -38,34 +26,7 @@ colorToggle = not flags.noColor and stdout.isatty()
 #divide into chunks of command that needs file argument, rulefile, hash
 #some flags look stupid and redundant so they should be removed.
 #hashpeek is bent on extraction hashes and identification(can be toggled)
-#maybe pattern extraction will be handled later
-#[
-hashpeek --help
 
-# Output:
-==================================================
-HASHPEEK 0.4.0 - Professional Hash Analysis Platform
-==================================================
-
-USAGE:
-  hashpeek [OPTIONS] [INPUT]
-
-CORE WORKFLOWS:
-  hashpeek -t HASH --analyze                    # Professional hash analysis
-  hashpeek -f FILE --extract --cracking-formats # Extract & identify from files
-  hashpeek -s PATH --context web --verbose      # Scan directories professionally
-
-INPUT OPTIONS:
-  -t, --text HASH           Analyze a single hash string
-  -f, --file FILE           Analyze hashes from a file
-  -s, --scan PATH           Recursive directory scanning for hashes
-  -pb, --probe LENGTHS      Probe for embedded hashes (e.g., 32, 32-64, 16,32,64)
-
-
-
-OUTPUT FORMATS:
-  --format FORMAT           Output format: simple, detailed, professional
-]#
 proc help*() =
   #uncomment flags when added functionality is added
   #paint "[bold fg=green]\n=======================================================================[reset]"
@@ -95,7 +56,6 @@ proc help*() =
   #-fd and -pb can be used together in one command
   #-pb should directly extract hashes hence it doesnt need -ovh
   #-pb should check if given file is binary, and convert to strings to extract hashes
-  #TODAY I'M ON EXTRACTION FLAGS (TO CREATE FUNCTIONALITY FOR IT)
   paint "\n[bold fg=blue][[fg=cyan]EXTRACTION OPTIONS[fg=blue]][reset]"
   paint "\t[bold fg=#FF6600]-fd[fg=green], [fg=#FF6600]--field '{N} X'[fg=green]: Capture segment at 1-based index N after splitting by delimiter X.[reset]"
   paint "\t[bold fg=#FF6600]-pb[fg=green], [fg=#FF6600]--probe[fg=green]: Probe data for embedded hashes(aggressive).[reset]"
@@ -107,20 +67,14 @@ proc help*() =
   #[paint "\n[bold blue][[cyan]FILTERING OPTIONS[blue]][reset]"
   paint "\t[bold fg=#FF6600]-me[fg=green], [fg=#FF6600]--min-entropy <float>[fg=green]: Minimum entropy to accept candidate.[reset]"
   paint "\t[bold fg=#FF6600]-mr[fg=green], [fg=#FF6600]--max-results N[fg=green]: Limit to top N results.[reset]"
-  #paint "\t[bold fg=#FF6600]-ign[fg=green], [fg=#FF6600]--ignore-numeric <file>[fg=green]: Skip numeric-only strings.[reset]"
-  paint "\t[bold fg=#FF6600]-sw[fg=green], [fg=#FF6600]--stop-words <file>[fg=green]: File with stop words for context extraction boundaries.[reset]"
-  paint "\t[bold fg=#FF6600]-k[fg=green], [fg=#FF6600]--keep-duplicates[fg=green]: Maintains duplicate extracted hashes.[reset]"
+  #paint "\t[bold fg=#FF6600]-k[fg=green], [fg=#FF6600]--keep-duplicates[fg=green]: Maintains duplicate extracted hashes.[reset]"
   paint "\t[bold fg=#FF6600]-cf[fg=green], [fg=#FF6600]--confidence-threshold N[fg=green]: Only show confidence >= N%.[reset]"]#
 
   #performance
   #[paint "\n[bold blue][[cyan]PERFORMANCE OPTIONS[blue]][reset]"
   paint "\t[bold fg=#FF6600]-t[fg=green], [fg=#FF6600]--threads <N>[fg=green]: Number of worker threads.[reset]"
-  #-ml protects ram by limiting its usage. what happens to cpu (it needs to be added but later)
-  #without memory limit, hashpeek should be smart enough to use 60%-80% of RAM. remember to keep it to avoid crashes
-  paint "\t[bold fg=#FF6600]-ml[fg=green], [fg=#FF6600]--memory-limit MB[fg=green]: Maximum RAM usage.[reset]"
-  #-cpu, -cpu-limit <N%>
-  #cpu limit will be required if hashpeek moves to chunking because cpu will stay busy if threading is added
-  paint "\t[bold fg=#FF6600]-prog[fg=green], [fg=#FF6600]--progress[fg=green]: Show progress meter.[reset]"]#
+  #without memory limit, hashpeek should be smart enough to use 60%-80% of RAM. remember to keep it to sensible default to avoid crashes
+  paint "\t[bold fg=#FF6600]-ml[fg=green], [fg=#FF6600]--memory-limit MB[fg=green]: Maximum RAM usage.[reset]"]#
 
 
   paint "\n[bold fg=blue][[fg=cyan]OUTPUT & FORMATTING OPTIONS[fg=blue]][reset]"
