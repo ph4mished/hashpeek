@@ -7,7 +7,7 @@ One will wonder, **"why a new hash identifier (hashpeek), aren't there enough of
 **You are right to question the existence of this tool**.
 
 There are many hash identifiers out there but they seem to have one limitation or the other.
-1. [bold cyan] Some don't accept input via stdin making it somehow difficult for scripting.[/bold cyan]
+1. Some don't accept input via stdin making it somehow difficult for scripting.
 
 2. Others too show outputs that are a hassle to grep (you need regex gymnastics to grep).
 
