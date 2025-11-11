@@ -134,6 +134,14 @@ for hash in extractedHashes:
 #to get a clear picture of the extracted hashes
 echo extractedHashes
 ```
+# TODOS
+- [ ] Add external database support (only in json).
+- [ ] change default format to tree format
+- [ ] Drop hex and context Extraction for an efficient one.
+- [ ] Add contexts and metadata per hash to the hash database.
+- [ ] Make the tool faster
+- [ ] Fix bugs
+- [ ] Accept generic extraction (not necessarily a hash) through external databases.
 
 # CLI Usage
 ![Hi](https://s14.gifyu.com/images/bwr2x.gif)
