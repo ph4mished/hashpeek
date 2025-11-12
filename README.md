@@ -11,12 +11,12 @@ There are many hash identifiers out there but they seem to have one limitation o
 
 2. Others too show outputs that are a hassle to grep (you need regex gymnastics to grep).
 
-3. Some too only accept hashes (no files) and those that accept hashfiles are prone to spamming your screen with redundant results.
+3. Some too only accept hashes (no files) and those that accept hashfiles are likely to spam your screen with redundant results(results-per-hash spam).
 
 4. Inability to extract hashes from logs, dumps and structured data (shadow files, etc)
 
 These are the issues or limitations hashpeek is here to solve.
-Without much ado, lets pop into some usage examples of hashpeek
+Without much ado, lets hop into some usage examples of hashpeek
 
 # Library Usage
 ## Identification
@@ -33,8 +33,6 @@ echo defaultFormat(identifiedResults)
 #json format output
 echo jsonFormat(identifiedResults)
 
-#csv format output
-echo csvFormat(identifiedResults)
 
 #for more flexibility
 for hashlago in identifiedResults.algorithms:
@@ -52,7 +50,7 @@ for hashlago in identifiedResults.algorithms:
 ``` nim
 import hashpeek
 
-#Hashpeek mostly extracts hashes before identification, the stream identification function was created for this reason to help identify hashes in files while maintaining its simplicity and flexibility
+#Hashpeek mostly extracts hashes before identification, the stream identification function was created for this reason to identify hashes in files while maintaining its simplicity and flexibility
 let hashes = @["0689e590864cee67b037c8f4c390a75a192bb01160cc9c21374afb12", "2d6d67d91d0badcdd06cbbba1fe11538a68a37ec9c2e26457ceff12b", "c5ae6e4ed4d8c0aec0f671978451411c37c765b76cda4050152e85a0"]
 
 for hash in hashes:
@@ -63,10 +61,6 @@ flushHashGroup()
 
   #for outputs in jsonFormat
   streamIdentify(input, jsonFormat)
-flushHashGroup()
-
-  #for output in csv format
-  streamIdentify(input, csvFormat)
 flushHashGroup()
 
   #you can use your custom output format too
@@ -97,6 +91,7 @@ else:
 
 ### extraction from unstructured or messy data
 ``` nim
+#Will Be Deprecated Soon
 # parseExtractToSeq is a function that accepts range of numbers, comma-separated numbers etc. this function makes it easier to increase length values for extraction without manually typing "1,2,3,..44"
 var extractedHashes: seq[string]
 let rangeExtract = parseExtractToSeq("10-99")
@@ -124,8 +119,6 @@ var myExtractor = Extractor(
 )
 extractedHashes.add(myExtractor.extract(input))
 for hash in extractedHashes:
-  #for csv format
-  echo csvFormat(identify(hash))
   #for json format
   echo jsonFormat(identify(hash))
   #for default format
