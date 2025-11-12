@@ -28,7 +28,7 @@ let identifiedResults = identify(hash)
 #hashpeek allows for different output format
 
 #colored-terminal format output
-echo defaultFormat(identifiedResults)
+echo treeFormat(identifiedResults)
 
 #json format output
 echo jsonFormat(identifiedResults)
@@ -54,11 +54,19 @@ import hashpeek
 let hashes = @["0689e590864cee67b037c8f4c390a75a192bb01160cc9c21374afb12", "2d6d67d91d0badcdd06cbbba1fe11538a68a37ec9c2e26457ceff12b", "c5ae6e4ed4d8c0aec0f671978451411c37c765b76cda4050152e85a0"]
 
 for hash in hashes:
-  #this function identifies, accumulates and sorts the results in default format
+  #this function identifies, accumulates and sorts the results
+  #new method but not stable yet
   streamIdentify(hash)
   #always remember to flush
-flushHashGroup()
+  #getStreamResults returns an object whose fields are sequence of the grouped results and grouped hashes
+let output = getStreamResults()
 
+#for outputs
+echo treeGroupFormat(output)
+echo jsonGroupFormat(output)
+
+
+  #this method awaits deprecation
   #for outputs in jsonFormat
   streamIdentify(input, jsonFormat)
 flushHashGroup()
