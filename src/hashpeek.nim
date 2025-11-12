@@ -1,13 +1,11 @@
 import strformat, terminal, os, strutils
-import hashpeek/file_analyze
 import spectra
 import help, cli_flag, helper_func
 
 #hashpeek expected input at the moment is that of a single hash and file, streams (of hashes and files) are handled explicitly
-#hashpeek will dropp its library api because it has made it complex to manage hashpeek
 
-import hashpeek/[analyze, outfmt, file_analyze, extract, hash_database]
-export analyze, outfmt, file_analyze, extract, hash_database
+import hashpeek/[analyze, outfmt, extract, hash_database]
+export analyze, outfmt, extract, hash_database
 # [INFO] = CYAN
 # [ERROR] = RED
 # [SKIP] = yellow
@@ -27,8 +25,15 @@ proc main() =
 
 
   if flags.file.len > 0:
+    if flags.file == "-":
+      for line in stdin.lines():
+        let filename = line.strip()
+        fileIdentify(filename)
+
+    elif flags.file != "-" and flags.file != "":
+      fileIdentify(flags.file)
     #fileIdentifyGroup(flags.file)
-    let file = open(flags.file, fmRead)
+    #[let file = open(flags.file, fmRead)
     defer: file.close()
     let totalHashes = fileCountLine(flags.file)
     #paint fmt "[bold fg=cyan][INFO] [fg=green]Found [fg=cyan]{totalHashes} [fg=green]hashes in [fg=yellow]{flags.file} [reset]"
@@ -51,28 +56,17 @@ proc main() =
     echo " ".repeat(4) & footer
     echo "=".repeat(eof.len+8)
 
-    return
+    return]#
 
   if flags.hash.len > 0:
     if flags.hash == "-":
       #maybe streams will do
       for line in stdin.lines():
         let input = line.strip
-        identifyHash(input, flags.trunc, flags.probe, flags.ignore, format)
+        identifyHash(input, flags.field, flags.probe, flags.ignore, format)
     elif flags.hash != "-" and flags.hash != "":
-      identifyHash(flags.hash, flags.trunc, flags.probe, flags.ignore, format)
-    #[if flags.json:
-      echo jsonFormat(identify(flags.hash))
-      return
-    elif flags.csv:
-      echo csvFormat(identify(flags.hash))
-      return
-    else:
-      stdout.write(ifColor(fgGreen, "\nHash: ") & ifColor(fgYellow, fmt "{flags.hash}\n"))
-      stdout.flushFile()
-      echo fmt "{defaultFormat(identify(flags.hash))}\n"
-      return
-    ]#
+      identifyHash(flags.hash, flags.field, flags.probe, flags.ignore, format)
+      #return
     
   if flags.help:
     help()

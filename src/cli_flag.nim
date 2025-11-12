@@ -6,7 +6,7 @@ type
     enc*: string
     file*: string
     hash*: string
-    trunc*: string
+    field*: string
     help*: bool
     ignore*: bool
     version*: bool
@@ -59,7 +59,7 @@ while i < paramCount():
     if i+1 >= paramCount():
       paint fmt "[bold fg=red][ERROR] Missing value after argument: [fg=green]{a}[reset]"
       quit(1)
-    flags.trunc = paramStr(i+2)
+    flags.field = paramStr(i+2)
     i = i+2
   of "-h", "--help":
     flags.help = true

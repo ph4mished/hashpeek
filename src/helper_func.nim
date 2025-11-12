@@ -1,6 +1,6 @@
-import strformat, terminal, strutils
+import strformat, terminal, strutils, os
 import spectra
-import hashpeek/[outfmt, file_analyze, analyze, extract], cli_flag
+import hashpeek/[outfmt, analyze, extract], cli_flag
 
 
 colorToggle = not flags.noColor and stdout.isatty()
@@ -46,47 +46,6 @@ HASHPEEK - FILE HASH ANALYSIS
 ├─ Processing Time: 0.8s
 └─ Analysis: Multi-hash correlation
 
-🔍 HASH TYPE GROUPS
-
-🏷️ GROUP 1: SHA-1 - 3 HASHS (37.5%)
-├─ Primary Type: SHA-1 (95% confidence)
-├─ Characteristics: 40 chars, hexadecimal, unsalted
-├─ Hashcat Mode: 100
-├─ John the Ripper: raw-sha1
-├─ Security Impact: 🟡 WARNING (Deprecated)
-└─ Sample Hashes (2 of 3):
-   ├─ a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
-   │  ├─ Best: SHA-1 (95%) - "test"
-   │  └─ Entropy: 3.85 ✅
-   └─ 7c4a8d09ca3762af61e59520943dc26494f8941b
-      ├─ Best: SHA-1 (96%) - "123456"  
-      └─ Entropy: 3.82 ✅
-
-🏷️ GROUP 2: MD5 - 2 HASHS (25%)
-├─ Primary Type: MD5 (95% confidence)
-├─ Characteristics: 32 chars, hexadecimal, unsalted
-├─ Hashcat Mode: 0
-├─ John the Ripper: raw-md5
-├─ Security Impact: 🔴 CRITICAL (Weak)
-└─ Sample Hashes (2 of 2):
-   ├─ 5f4dcc3b5aa765d61d8327deb882cf99
-   │  ├─ Best: MD5 (98%) - "password"
-   │  └─ Entropy: 3.72 ✅
-   └─ e10adc3949ba59abbe56e057f20f883e
-      ├─ Best: MD5 (97%) - "123456"
-      └─ Entropy: 3.70 ✅
-
-🏷️ GROUP 3: bcrypt - 2 HASHS (25%)
-├─ Primary Type: bcrypt (100% confidence)
-├─ Characteristics: $2a$ prefix, 60 chars, salted
-├─ Hashcat Mode: 3200
-├─ John the Ripper: bcrypt
-├─ Security Impact: 🟢 SECURE (Modern)
-└─ Sample Hashes (2 of 2):
-   ├─ $2a$10$N9qo8uLOickgx2ZMRZoMyeIJNRQePd7gJZpbj6BnOdpVq.pPoh6z6
-   │  └─ Best: bcrypt (100%) - Strong
-   └─ $2a$12$L6qyD8Q1zR2nS9pXwY3vAeB4cD5eF6gH7iJ8kL9mN0oP1qR2sT3u
-      └─ Best: bcrypt (100%) - Strong
 
 🏷️ GROUP 4: UNIDENTIFIED - 1 HASH (12.5%)
 ├─ Hash: xyz123abc456def789ghi012jkl345mno678pqr
@@ -101,7 +60,30 @@ HASHPEEK - FILE HASH ANALYSIS
 
 ]#
 
-
+proc fileIdentify*(filename#[, truncLine: string, probe, ignore: bool, format]#: string) =
+  if filename.fileExists():
+    #[case format:
+    of "json": 
+      let form = jsonFormat
+    else: 
+     let form = defaultFormat]#
+    #var lineCount, groupCount = 0
+    for line in lines(filename):
+      #inc(lineCount)
+      streamIdentify(line)
+    let res = treeGroupFormat(getStreamResults())
+    #drop paint until range defect error is fixed
+    echo res
+    echo "END OF FILE"
+    #echo res
+    #[echo fmt "Found {lineCount} HASHES IN {filename}"
+    for group in res.groups:
+      inc(groupCount)
+      paint fmt "\n\n[bold fg=white]HASH CLUSTER {groupCount}[fg=reset]: [fg=#FF6600]   {group.count} OF {lineCount} HASHES ARE[reset]\n{group.output}[na]"
+      for hash in group.hashes:
+        echo fmt "[EXTRACTED HASHES]: {hash}"]#
+  else:
+    echo fmt "File: {filename} does not exists"
 
 
 proc identifyHash*(hash, truncLine: string, probe, ignore: bool, format: string) =
@@ -140,9 +122,7 @@ proc identifyHash*(hash, truncLine: string, probe, ignore: bool, format: string)
         
         
         for extHash in extHashes:
-          if format == "csv":
-            echo csvFormat(identify(extHash))
-          elif format == "json":
+          if format == "json":
             echo jsonFormat(identify(extHash))
           else:
             #echo "hi"
@@ -160,14 +140,7 @@ proc identifyHash*(hash, truncLine: string, probe, ignore: bool, format: string)
       fp.incrementLine()
       let (truncRes, error) = fp.parseField(hash, truncDelim, truncIndex)
       if truncRes != "" or error.status == "error":
-        if format == "csv":
-          if error.status == "error":
-            stderr.writeLine("status,error,line,content")
-            stderr.writeLine(fmt "{error.status},{error.message},{error.line},{error.content}")
-            stderr.flushFile()
-            quit(1)
-          echo csvFormat(identify(truncRes))
-        elif format == "json":
+        if format == "json":
           #handle error for json
           if error.status == "error":
             echo jsonErrOut(error)
@@ -186,11 +159,7 @@ proc identifyHash*(hash, truncLine: string, probe, ignore: bool, format: string)
     
     #for normal
     else:
-      if format == "csv":
-        echo hash
-        echo csvFormat(identify(hash))
-        return
-      elif format == "json":
+      if format == "json":
         echo jsonFormat(identify(hash))
         return
       else:
@@ -199,12 +168,3 @@ proc identifyHash*(hash, truncLine: string, probe, ignore: bool, format: string)
         echo fmt "{treeFormat(identify(hash))}\n"
       return
 
-
-
-#[proc identifyFile*(hashFile, truncLine: string, extract, ignore: bool, format: string) =
-  #this is meant to open a given file and identify it
-  echo fmt "[INFO] Analyzing file: {hashFile}"
-  #detected file format (a file format parsing function is needed)
-  #eg:
-  #echo fmt "[INFO] Detected shadow file format"
-  echo fmt "[INFO] Analyzing file: {hashFile}"]#
