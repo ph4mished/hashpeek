@@ -16,7 +16,6 @@ There are many hash identifiers out there but they seem to have one limitation o
 4. Inability to extract hashes from logs, dumps and structured data (shadow files, etc)
 
 These are the issues or limitations hashpeek is here to solve.
-Without much ado, lets hop into some usage examples of hashpeek
 
 
 # TODOS
